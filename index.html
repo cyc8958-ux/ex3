@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>해외 AI 활용 시험 부정행위 실태 및 대응 전략 분석</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131c2e;
+            --bg-card: rgba(22, 33, 56, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-blue: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-red: #f43f5e;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glow: 0 0 25px rgba(56, 189, 248, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Presentation Container */
+        .presentation-deck {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.96) translateY(20px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 50px 80px 100px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                        var(--bg-primary);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Header Elements */
+        .slide-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 9999px;
+            color: var(--accent-blue);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            width: fit-content;
+        }
+
+        .slide-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .slide-desc {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+            max-width: 900px;
+            line-height: 1.5;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            height: calc(100% - 150px);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            height: calc(100% - 150px);
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            height: calc(100% - 150px);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-4px);
+            box-shadow: var(--glow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .tag-red { background: rgba(244, 63, 94, 0.15); color: var(--accent-red); border: 1px solid rgba(244, 63, 94, 0.3); }
+        .tag-blue { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .tag-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .tag-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .card-body {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .card-body ul {
+            list-style: none;
+        }
+
+        .card-body li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 8px;
+        }
+
+        .card-body li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+
+        /* Flow Diagram */
+        .workflow-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            height: 100%;
+            padding: 10px 0;
+        }
+
+        .flow-step {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px 16px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .flow-step-num {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            margin-bottom: 6px;
+        }
+
+        .flow-step-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .flow-arrow {
+            font-size: 1.8rem;
+            color: var(--accent-blue);
+            opacity: 0.7;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        /* Controls Bottom Bar */
+        .control-bar {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(19, 28, 46, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 9999px;
+            padding: 8px 24px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .btn-ctrl {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1rem;
+            padding: 8px 14px;
+            border-radius: 9999px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ctrl:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .slide-counter {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 1001;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transition: width 0.3s ease;
+        }
+
+        /* Title Slide Custom */
+        .slide-title-page {
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-title-page .slide-badge {
+            margin-bottom: 24px;
+        }
+
+        .main-hero-title {
+            font-size: 3.6rem;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 20%, #38bdf8 70%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.35rem;
+            color: var(--text-muted);
+            max-width: 820px;
+            line-height: 1.6;
+            margin-bottom: 36px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 10px;
+        }
+
+        .hero-stat-box {
+            text-align: center;
+            padding: 16px 28px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+        }
+
+        .hero-stat-num {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+        }
+
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Key Highlights Table */
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+
+        .custom-table th {
+            background: rgba(56, 189, 248, 0.15);
+            color: #fff;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .custom-table td {
+            padding: 14px 18px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            line-height: 1.5;
+        }
+
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .custom-table tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+
+    <div class="presentation-deck" id="deck">
+
+        <!-- SLIDE 1: Title -->
+        <div class="slide slide-title-page active">
+            <div class="slide-badge">GLOBAL AI SECURITY REPORT</div>
+            <h1 class="main-hero-title">해외 AI 활용 시험 부정행위 실태<br>및 첨단 대응 전략 분석</h1>
+            <p class="hero-desc">초소형 하드웨어(스파이 카메라, AI 안경, 나노 자석 이어폰)와 실시간 멀티모달 LLM이 결합된 신종 부정응시 수법 및 각국 정부의 방어 체계</p>
+            
+            <div class="hero-stats">
+                <div class="hero-stat-box">
+                    <div class="hero-stat-num">2.5초</div>
+                    <div class="hero-stat-label">AI 문제촬영 ➔ 정답 음성수신</div>
+                </div>
+                <div class="hero-stat-box">
+                    <div class="hero-stat-num">2 mm</div>
+                    <div class="hero-stat-label">고막 안착형 무전원 나노 자석 크기</div>
+                </div>
+                <div class="hero-stat-box">
+                    <div class="hero-stat-num">832명</div>
+                    <div class="hero-stat-label">2024 美 의사시험(USMLE) 취소 사태</div>
+                </div>
+                <div class="hero-stat-box">
+                    <div class="hero-stat-num">최대 10년</div>
+                    <div class="hero-stat-label">인도/중국 부정행위 형사 처벌 수위</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Global Cheating Landscape -->
+        <div class="slide">
+            <div class="slide-badge">01. GLOBAL INCIDENTS</div>
+            <h2 class="slide-title">해외 주요 AI 부정응시 적발 사례</h2>
+            <p class="slide-desc">과거 단순 커닝페이퍼를 넘어 '초소형 센서 + 셀룰러 중계망 + 생성형 AI 추론'이 결합된 지능형 범죄 급증</p>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🇹🇷 튀르키예 YKS 대입</span>
+                        <span class="card-tag tag-red">2024 현장 체포</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>단추형 핀홀 카메라</strong>로 시험지 실시간 스캔</li>
+                            <li><strong>신발 밑창 매립 라우터</strong>로 외부 클라우드 통신</li>
+                            <li><strong>OpenAI GPT-4o API</strong>로 자동 문제 풀이</li>
+                            <li>귓속 <strong>자석 초소형 이어폰</strong>으로 실시간 정답 수신</li>
+                            <li>행동 이상을 감지한 감독관에 의해 현행범 구속</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🇺🇸 미국 USMLE 의사면허</span>
+                        <span class="card-tag tag-red">832명 점수 취소</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>네팔 등 해외 시험센터 중심 대규모 문제 유출</li>
+                            <li>폐쇄형 텔레그램 비밀방에서 AI 정답 생성/암기</li>
+                            <li><strong>심리측정학적 통계 포렌식</strong>(Psychometrics) 가동</li>
+                            <li>문항당 수 초 만의 비정상 풀이 속도 입증</li>
+                            <li>연방법원 가처분 기각, 전원 면허 배제 처분</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🇮🇳 인도 NEET / REET</span>
+                        <span class="card-tag tag-amber">조직적 브로커망</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>블루투스 슬리퍼(Chappals)</strong> 밑창에 SIM·회로 매립</li>
+                            <li>1켤레당 약 400만 ~ 1,000만 원에 암시장 거래</li>
+                            <li>주 정부 전역 인터넷 셧다운에도 음성망 우회</li>
+                            <li>2024 의대 입시 '솔버 갱(Solver Gang)' 대규모 적발</li>
+                            <li>공공시험 부정방지 특별법 제정 계기 마련</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Hardware Ecosystem 1 - Cameras & Smart Glasses -->
+        <div class="slide">
+            <div class="slide-badge">02. HARDWARE THREATS</div>
+            <h2 class="slide-title">부정시험 악용 하드웨어: 카메라 & AI 안경</h2>
+            <p class="slide-desc">오픈마켓에서 저렴하게 구매 가능하며, 렌즈 및 통신 모듈이 일상 소지품으로 완벽히 위장</p>
+
+            <div class="grid-4">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">단추형 스파이 카메라</span>
+                        <span class="card-tag tag-blue">Pinhole Lens</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>1mm 핀홀 렌즈를 셔츠 단추 캡 뒤에 배치</li>
+                            <li>1080p 해상도로 8~10pt 인쇄물 선명 캡처</li>
+                            <li>Wi-Fi P2P 또는 4G LTE 모뎀 연동</li>
+                        </ul>
+                        <div class="price-badge">$15 ~ $45 (약 2만~6만 원)</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">볼펜형 스파이 카메라</span>
+                        <span class="card-tag tag-blue">Spy Pen</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>실제 볼펜 기능 정상 작동</li>
+                            <li>클립 위 1mm 렌즈로 자연스러운 시험지 수직 화각 확보</li>
+                            <li>슬라이딩 셔터로 물리적 은폐 가능</li>
+                        </ul>
+                        <div class="price-badge">$25 ~ $80 (약 3.5만~11만 원)</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Ray-Ban Meta 안경</span>
+                        <span class="card-tag tag-amber">멀티모달 AI</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>12MP 카메라 + 오픈이어 스피커 + Meta AI</li>
+                            <li>일반 패션 뿔테와 1:1 완벽 동일 외형</li>
+                            <li>촬영 안내 LED는 스티커/매니큐어로 차단</li>
+                        </ul>
+                        <div class="price-badge">$299 ~ $379 (약 41만~52만 원)</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Even Realities G1</span>
+                        <span class="card-tag tag-red">초소형 HUD</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>카메라 렌즈가 전혀 없음 (Zero-Cam)</strong></li>
+                            <li>렌즈 내 녹색 Micro-LED 텍스트 투사</li>
+                            <li>외부 30도 각도에서는 글자가 전혀 안 보임</li>
+                        </ul>
+                        <div class="price-badge">$599 ~ $699 (약 82만~96만 원)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Hardware Ecosystem 2 - Earpieces & Transmitters -->
+        <div class="slide">
+            <div class="slide-badge">03. AUDIO RECEPTION</div>
+            <h2 class="slide-title">은닉 음향 수신 도구: 나노 자석 & 유도 루프</h2>
+            <p class="slide-desc">전원과 배터리가 없는 100% 패시브 소자로, 외이도 육안 검사로도 식별 불가능</p>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">자석 나노 이어폰 (2mm)</span>
+                        <span class="card-tag tag-red">배터리·회로 없음</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>규격:</strong> 직경 2.0~3.0mm 네오디뮴 자석 조각</li>
+                            <li><strong>원리:</strong> 고막(Tympanic Membrane) 표면에 직접 안착, 외부 자기장에 반응해 고막을 물리적으로 타격 진동</li>
+                            <li><strong>은폐도:</strong> 외이도 깊숙이 안착되어 이경(Otoscope) 없이는 관찰 불가</li>
+                            <li><strong>적출:</strong> 고자력 자석 막대로 꺼냄</li>
+                        </ul>
+                        <div class="price-badge">2개당 $1 ~ $3 (약 1,400~4,000원)</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">독립형 GSM 박스 / 카드</span>
+                        <span class="card-tag tag-blue">스마트폰 불필요</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>신용카드 두께(5mm) 모듈에 <strong>자체 Nano-SIM</strong> 삽입</li>
+                            <li><strong>자동 수신(Auto-Answer):</strong> 벨소리/진동 없이 전화 즉시 자동 연결</li>
+                            <li>고감도 마이크 내장으로 미세 속삭임 송출</li>
+                            <li>유도 넥루프 코일 일체형 탑재</li>
+                        </ul>
+                        <div class="price-badge">$40 ~ $90 (약 5.5만~12만 원)</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Monorean Pro 풀 패키지</span>
+                        <span class="card-tag tag-amber">전문 상용 시스템</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>유럽 전문 스파이 장비 제조사 솔루션</li>
+                            <li>티셔츠 밑에 착용해도 안 비치는 극세 넥루프</li>
+                            <li>신발 바닥에 넣는 <strong>발가락 무음 비퍼</strong>(모스부호 통신)</li>
+                            <li>자체 웹 AI 솔버(Quiz Solver) 플랫폼 지원</li>
+                        </ul>
+                        <div class="price-badge">€549 (약 81만 원)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Real-time AI Pipeline Workflow -->
+        <div class="slide">
+            <div class="slide-badge">04. SYSTEM ARCHITECTURE</div>
+            <h2 class="slide-title">실시간 AI 부정행위 엔드투엔드 파이프라인</h2>
+            <p class="slide-desc">문제 캡처부터 고막 음성 수신까지 약 2.2초 ~ 3.7초 만에 완료되는 자동화 구조</p>
+
+            <div class="workflow-container">
+                <div class="flow-step">
+                    <div class="flow-step-num">PHASE 01 (0.5~1.0s)</div>
+                    <div class="flow-step-title">영상 캡처</div>
+                    <div class="card-body">
+                        <p><strong>단추형 카메라 / AI 글래스</strong></p>
+                        <p style="margin-top:8px; font-size:0.85rem; color:#94a3b8;">1080p 고화질 핀홀 렌즈로 종이 시험지 문제 영역 접사 촬영 (무음 셔터/발 페달)</p>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">➔</div>
+
+                <div class="flow-step">
+                    <div class="flow-step-num">PHASE 02 (0.5~1.0s)</div>
+                    <div class="flow-step-title">셀룰러 중계</div>
+                    <div class="card-body">
+                        <p><strong>신발 밑창 LTE 라우터</strong></p>
+                        <p style="margin-top:8px; font-size:0.85rem; color:#94a3b8;">Wi-Fi/BLE 초근거리 통신 ➔ 4G/5G 셀룰러망을 통해 외부 클라우드 WSS/HTTPS 업로드</p>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">➔</div>
+
+                <div class="flow-step">
+                    <div class="flow-step-num">PHASE 03 (1.0~2.0s)</div>
+                    <div class="flow-step-title">AI 비전 추론</div>
+                    <div class="card-body">
+                        <p><strong>GPT-4o / Claude 3.5</strong></p>
+                        <p style="margin-top:8px; font-size:0.85rem; color:#94a3b8;">사전 튜닝된 프롬프트로 문제 인식 후 정답 번호 및 키워드 단답형 고속 도출</p>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">➔</div>
+
+                <div class="flow-step">
+                    <div class="flow-step-num">PHASE 04 (0.2~0.4s)</div>
+                    <div class="flow-step-title">초저지연 TTS</div>
+                    <div class="card-body">
+                        <p><strong>ElevenLabs / Fast TTS</strong></p>
+                        <p style="margin-top:8px; font-size:0.85rem; color:#94a3b8;">정답 텍스트를 초저지연 오디오 스트림(MP3 Chunk)으로 변환 후 음성 통화 송출</p>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">➔</div>
+
+                <div class="flow-step" style="border-color: rgba(56, 189, 248, 0.4);">
+                    <div class="flow-step-num">PHASE 05 (즉시)</div>
+                    <div class="flow-step-title">고막 진동 수신</div>
+                    <div class="card-body">
+                        <p><strong>2mm 나노 자석 이어폰</strong></p>
+                        <p style="margin-top:8px; font-size:0.85rem; color:#94a3b8;">인덕티브 넥루프의 전자기 유도로 자석이 고막 직접 진동 ➔ "14번 정답 3번"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Countermeasures (Gov & Institutions) -->
+        <div class="slide">
+            <div class="slide-badge">05. DEFENSE STRATEGY</div>
+            <h2 class="slide-title">해외 정부 및 시험기관의 다층 방어 체계</h2>
+            <p class="slide-desc">물리적 검색, 비선형 전파 탐지, 생체 검사, 법적 형사처벌 및 전통 시험 회귀의 5중 방어선 구축</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📡 첨단 하드웨어 탐지 기술</span>
+                        <span class="card-tag tag-blue">현장 보안</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>비선형 접합 탐지기 (NLJD):</strong> 반도체 고조파 감지로 <strong>전원이 꺼진 칩셋 및 카메라 모듈 100% 적발</strong></li>
+                            <li><strong>광대역 RF 스펙트럼 스캐너:</strong> 20MHz~6GHz 실시간 스캐닝으로 LTE 버스트 신호 및 블루투스 넥루프 삼각측량 적발</li>
+                            <li><strong>전파 차단기(Jammer) & 셧다운:</strong> 인도, 중국, 알제리는 국가 차원의 합법 전파 재밍 또는 모바일 인터넷 일시 차단 운용</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🔍 신체 검사 및 안경 검사 표준화</span>
+                        <span class="card-tag tag-amber">물리 검문</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>외이도 광학 검사:</strong> 의료용 이경(Otoscope) 검사 및 고자력 자석봉(Magnetic Wand)으로 귓속 나노 자석 적출</li>
+                            <li><strong>스마트 안경 전면 금지:</strong> ETS, SAT 등 안경테 두께, 힌지, 편광/적외선 돋보기를 통한 HUD 디스플레이 분해 검사</li>
+                            <li><strong>복장 규정 극단화:</strong> 긴소매·지퍼·금속단추 금지, 맨발 또는 얇은 투명 슬리퍼 착용 강제(인도 NEET)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📊 사후 통계 데이터 포렌식</span>
+                        <span class="card-tag tag-green">Psychometrics</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>미국 USMLE 모델:</strong> 문항별 풀이 시간(초 단위), 난이도 역전 현상, 오답 일치율 빅데이터 전수 조사</li>
+                            <li>통계적으로 불가능한 확률 근거로 <strong>사후 점수 무효화 및 면허 박탈</strong></li>
+                            <li>듀얼 카메라 프로토콜(스마트폰 측후방 45도 감시)로 온라인 감독 사각지대 해소</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">⚖️ 법적 처벌 강화 & 지필고사 회귀</span>
+                        <span class="card-tag tag-red">법제화 & 정책</span>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>중국 형법 제284조:</strong> 시험부정 조직자 <strong>최대 7년 징역</strong></li>
+                            <li><strong>인도 특별법(2024):</strong> 브로커 <strong>징역 10년 및 1억 6천만 원 벌금</strong></li>
+                            <li><strong>오프라인 회귀:</strong> 영국 옥스퍼드, 호주 명문대(Go8) 등 온라인 시험 폐지 및 <strong>밀폐 시험장 종이 지필고사(P&P)·구술시험 복귀</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Summary & Recommendations -->
+        <div class="slide">
+            <div class="slide-badge">06. STRATEGIC INSIGHTS</div>
+            <h2 class="slide-title">종합 결론 및 향후 정책 제언</h2>
+            <p class="slide-desc">기술의 민주화로 인한 부정행위 진입장벽 붕괴에 대비하여 사전·현장·사후 전주기 보안 프로세스 수립 필요</p>
+
+            <table class="custom-table" style="margin-top: 10px;">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">구분</th>
+                        <th style="width: 40%;">현안 및 보안 취약점</th>
+                        <th style="width: 40%;">권고 대응 방안</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>하드웨어 위협</strong></td>
+                        <td>알리발 $15 핀홀 카메라, 2mm 무전원 나노 자석, 카메라 없는 HUD 안경(Even Realities G1) 등 육안 감별 한계</td>
+                        <td>입구에 비선형 접합 탐지기(NLJD) 및 광대역 RF 스캐너 의무 도입, 의료용 이경 및 자석봉 신체 검사 표준화</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI 실시간 연동</strong></td>
+                        <td>GPT-4o 등 멀티모달 LLM과 초저지연 TTS 결합으로 2~3초 만에 단답 정답 피드백 파이프라인 자동화</td>
+                        <td>시험장 내 주파수 신호 감시 강화 및 사후 문항별 풀이 시간/오답 패턴 심리측정학적 빅데이터 포렌식 도입</td>
+                    </tr>
+                    <tr>
+                        <td><strong>평가 체계 신뢰도</strong></td>
+                        <td>하드웨어 스플리터/PiKVM 등으로 인해 온라인 원격 감독 소프트웨어(Lockdown Browser 등) 무력화</td>
+                        <td>고위험 자격·학위 시험의 경우 공항 수준 보안의 오프라인 전용 센터 지필고사(P&P) 및 대면 구술평가 비중 확대</td>
+                    </tr>
+                    <tr>
+                        <td><strong>사법·제도적 처벌</strong></td>
+                        <td>단순 학칙 위반이나 0점 처리 수준의 미온적 제재로 인한 재발 위험</td>
+                        <td>해외 입법례(중국 징역 7년, 인도 징역 10년) 벤치마킹을 통한 국가시험 부정행위 방지 특별 형사법 제정</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Navigation Control Bar -->
+    <div class="control-bar">
+        <button class="btn-ctrl" id="prevBtn" title="이전 슬라이드 (또는 좌측 방향키)">◀ 이전</button>
+        <div class="slide-counter" id="slideCounter">1 / 7</div>
+        <button class="btn-ctrl" id="nextBtn" title="다음 슬라이드 (또는 우측 방향키)">다음 ▶</button>
+        <button class="btn-ctrl" id="fullscreenBtn" title="풀스크린 모드 (F키)">⛶ 풀스크린</button>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const counter = document.getElementById('slideCounter');
+        const progressBar = document.getElementById('progressBar');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        function updateSlide(index) {
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle('active', idx === index);
+            });
+            currentIndex = index;
+            counter.textContent = `${index + 1} / ${totalSlides}`;
+            progressBar.style.width = `${((index + 1) / totalSlides) * 100}%`;
+        }
+
+        function nextSlide() {
+            if (currentIndex < totalSlides - 1) {
+                updateSlide(currentIndex + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                updateSlide(currentIndex - 1);
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error("Fullscreen error:", err);
+                });
+                fullscreenBtn.innerHTML = "🗗 창모드";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    fullscreenBtn.innerHTML = "⛶ 풀스크린";
+                }
+            }
+        }
+
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                prevSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            } else if (e.key === 'Home') {
+                updateSlide(0);
+            } else if (e.key === 'End') {
+                updateSlide(totalSlides - 1);
+            }
+        });
+
+        // Initialize progress bar
+        updateSlide(0);
+    </script>
+</body>
+</html>
